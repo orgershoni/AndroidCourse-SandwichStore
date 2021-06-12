@@ -1,0 +1,150 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".NewOrderActivity">
+
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#AA4040">
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <TextView
+            android:id="@+id/headline_new_order"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#AA4040"
+            android:text="NEW ORDER"
+            android:textAlignment="textStart"
+            android:textSize="40sp"
+            android:layout_marginTop="16dp"
+            android:inputType="numberDecimal"
+            android:textColor="@color/black"
+            android:layout_marginBottom="64dp"
+            android:textAllCaps="true"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/colored_rect_with_rounded_corners"
+        android:hint="Enter your name here"
+        android:layout_marginTop="16dp"
+        android:inputType="text"
+        android:textColor="@color/black"
+        />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_desc"
+        >
+
+        <EditText
+            android:id="@+id/pickles_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/colored_rect_with_rounded_corners"
+            android:hint="Number of pickles"
+            android:layout_marginTop="16dp"
+            android:inputType="numberDecimal"
+            android:textColor="@color/black"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/add_hummus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/colored_rect_with_rounded_corners"
+        android:text="Hummus "
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingStart="16dp"
+        android:textColor="@color/black"
+
+        />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/add_tahini"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/colored_rect_with_rounded_corners"
+        android:text="Tahini "
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingStart="16dp"
+        android:textColor="@color/black"
+
+        />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <EditText
+            android:id="@+id/comment_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/colored_rect_with_rounded_corners"
+            android:hint="Add you comment here"
+            android:layout_marginTop="16dp"
+            android:inputType="text"
+            android:textColor="@color/black"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <Button
+            android:id="@+id/deleteButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/blue_200"
+            android:layout_marginTop="16dp"
+            android:text="Delete Order"
+            android:textColor="@color/black"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+</LinearLayout>
+
+<com.google.android.material.floatingactionbutton.FloatingActionButton
+    android:id="@+id/save_button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:contentDescription="TODO"
+    app:backgroundTint="#47C889"
+    app:srcCompat="@drawable/ic_baseline_done_24"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    android:layout_marginTop="56dp"
+    android:layout_marginEnd="32dp"
+    />
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
