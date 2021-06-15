@@ -1,0 +1,52 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#AA4040"
+    tools:context=".NewOrderActivity">
+
+    <TextView
+        android:id="@+id/headline_order_in_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#AA4040"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="ORDER IN PROGRESS"
+        android:textAlignment="center"
+        android:textSize="40sp"
+        android:layout_marginTop="16dp"
+        android:inputType="numberDecimal"
+        android:textColor="@color/black"
+        android:layout_marginBottom="64dp"
+        android:textAllCaps="true"
+        />
+
+    <Button
+        android:id="@+id/gotItButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/blue_200"
+        android:layout_marginTop="16dp"
+        android:text="Got it !"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="32dp"
+        />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:indeterminateOnly="true"
+        app:layout_constraintTop_toBottomOf="@+id/headline_order_in_progress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+

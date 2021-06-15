@@ -11,6 +11,8 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.*
 
@@ -24,6 +26,8 @@ open class NewOrderActivity : AppCompatActivity() {
     var name : String = ""
     var orderId : String = ""
 
+    protected lateinit var db: OrdersDataBase
+    protected var currentOrder: OrderFireStore? = null
 
     protected lateinit var picklesNumView: EditText
     protected lateinit var switchHummus: SwitchCompat
@@ -33,10 +37,18 @@ open class NewOrderActivity : AppCompatActivity() {
     protected lateinit var saveButton : FloatingActionButton
     protected lateinit var deleteButton : Button
 
+    protected lateinit var orderLiveData : LiveData<OrderFireStore>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_order)
+
+        db = SandwichStoreApp.getInstance().ordersDataBase
+        orderLiveData = db.getOrderLiveData()
+        orderLiveData.observe(this, {orderFireStore -> this.currentOrder = orderFireStore
+        })
+
 
         picklesNumView = findViewById(R.id.pickles_number)
         switchHummus = findViewById(R.id.add_hummus)
@@ -45,8 +57,6 @@ open class NewOrderActivity : AppCompatActivity() {
         nameView = findViewById(R.id.name)
         saveButton = findViewById(R.id.save_button)
         deleteButton = findViewById(R.id.deleteButton)
-
-        orderId = UUID.randomUUID().toString()
 
         deleteButton.visibility = GONE;
 
@@ -153,25 +163,24 @@ open class NewOrderActivity : AppCompatActivity() {
         {
             return
         }
+        if (orderId == "")
+        {
+            orderId = UUID.randomUUID().toString()
+        }
 
-
+        // update db
         val sandwichFireStore = OrderFireStore(id = this.orderId, costumerName = this.name, pickles = picklesNum,
                 hummus = this.addHummus, tahini = this.addTahini, comment=this.comment)
-        val db = SandwichStoreApp.getInstance().ordersDataBase
         db.uploadOrder(sandwichFireStore)
 
-        val intent = Intent(this, EditOrderActivity::class.java)
-        intent.putExtra("order_id", this.orderId)
+        // update SP
+        db.saveToSP(ORDER_ID_KEY, orderId)
 
-        db.saveToSP(LAST_EDIT_STATUS, OrderFireStore(hummus=this.addHummus,
-                tahini=this.addTahini,
-                pickles=this.picklesNum,
-                costumerName=this.name,
-                comment=this.comment,
-                id=this.orderId))
 
+        // start new activity
         if (startActivity)
         {
+            val intent = Intent(this, EditOrderActivity::class.java)
             startActivity(intent)
         }
     }
@@ -196,9 +205,8 @@ open class NewOrderActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         val db = SandwichStoreApp.getInstance().ordersDataBase
-        val newOrderParams = db.getFromSP(LAST_EDIT_STATUS, OrderFireStore::class.java) ?: return
-
-        restoreActivity(newOrderParams)
+        val orderId = db.getFromSP(ORDER_ID_KEY, String::class.java) ?: return
+        this.orderId = orderId
 
     }
 
@@ -206,21 +214,21 @@ open class NewOrderActivity : AppCompatActivity() {
         super.onDestroy()
 
         val db = SandwichStoreApp.getInstance().ordersDataBase
-        db.saveToSP(LAST_EDIT_STATUS, OrderFireStore(hummus=this.addHummus,
-                                                        tahini=this.addTahini,
-                                                        pickles=this.picklesNum,
-                                                        costumerName=this.name,
-                                                        comment=this.comment,
-                                                        id=this.orderId))
+        if (orderId == "")
+        {
+            orderId = UUID.randomUUID().toString()
+        }
+        db.saveToSP(ORDER_ID_KEY, orderId)
 
     }
-    fun restoreActivity(orderFireStore: OrderFireStore){
+    protected fun restoreActivity(orderFireStore: OrderFireStore){
 
         this.addHummus = orderFireStore.hummus
         this.addTahini = orderFireStore.tahini
         this.name = orderFireStore.costumerName
         this.picklesNum = orderFireStore.pickles
         this.comment = orderFireStore.comment
+        this.orderId = orderFireStore.id
 
         switchHummus.isChecked = this.addHummus
         switchTahini.isChecked = this.addTahini
@@ -230,6 +238,6 @@ open class NewOrderActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val LAST_EDIT_STATUS = "last_edit_status"
+        const val ORDER_ID_KEY = "last_edit_status"
     }
 }

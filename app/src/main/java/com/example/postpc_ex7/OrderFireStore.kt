@@ -12,9 +12,12 @@ enum class OrderStatus {
     DONE
 }
 
-data class OrderFireStore(var hummus: Boolean, var tahini: Boolean, var pickles: Int,
-                          var comment: String, var costumerName: String,
-                          var id : String,
+data class OrderFireStore(var hummus: Boolean = false,
+                          var tahini: Boolean = false,
+                          var pickles: Int = 0,
+                          var comment: String = "",
+                          var costumerName: String = "",
+                          var id : String = "",
                           var status : OrderStatus = OrderStatus.WAITING) : Serializable
 {
     fun serialize() : String{
