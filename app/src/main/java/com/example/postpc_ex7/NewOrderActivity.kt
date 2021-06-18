@@ -24,10 +24,8 @@ open class NewOrderActivity : AppCompatActivity() {
     var picklesNum : Int = 0
     var comment : String = ""
     var name : String = ""
-    var orderId : String = ""
 
     protected lateinit var db: OrdersDataBase
-    protected var currentOrder: OrderFireStore? = null
 
     protected lateinit var picklesNumView: EditText
     protected lateinit var switchHummus: SwitchCompat
@@ -37,18 +35,12 @@ open class NewOrderActivity : AppCompatActivity() {
     protected lateinit var saveButton : FloatingActionButton
     protected lateinit var deleteButton : Button
 
-    protected lateinit var orderLiveData : LiveData<OrderFireStore>
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_order)
 
         db = SandwichStoreApp.getInstance().ordersDataBase
-        orderLiveData = db.getOrderLiveData()
-        orderLiveData.observe(this, {orderFireStore -> this.currentOrder = orderFireStore
-        })
-
 
         picklesNumView = findViewById(R.id.pickles_number)
         switchHummus = findViewById(R.id.add_hummus)
@@ -163,18 +155,11 @@ open class NewOrderActivity : AppCompatActivity() {
         {
             return
         }
-        if (orderId == "")
-        {
-            orderId = UUID.randomUUID().toString()
-        }
 
         // update db
-        val sandwichFireStore = OrderFireStore(id = this.orderId, costumerName = this.name, pickles = picklesNum,
+        val sandwichFireStore = OrderFireStore(id = getId(), costumerName = this.name, pickles = picklesNum,
                 hummus = this.addHummus, tahini = this.addTahini, comment=this.comment)
         db.uploadOrder(sandwichFireStore)
-
-        // update SP
-        db.saveToSP(ORDER_ID_KEY, orderId)
 
 
         // start new activity
@@ -191,8 +176,7 @@ open class NewOrderActivity : AppCompatActivity() {
                                                             tahini=this.addTahini,
                                                             pickles=this.picklesNum,
                                                             costumerName=this.name,
-                                                            comment=this.comment,
-                                                            id=this.orderId))
+                                                            comment=this.comment))
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -202,25 +186,6 @@ open class NewOrderActivity : AppCompatActivity() {
 
     }
 
-    override fun onResume() {
-        super.onResume()
-        val db = SandwichStoreApp.getInstance().ordersDataBase
-        val orderId = db.getFromSP(ORDER_ID_KEY, String::class.java) ?: return
-        this.orderId = orderId
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        val db = SandwichStoreApp.getInstance().ordersDataBase
-        if (orderId == "")
-        {
-            orderId = UUID.randomUUID().toString()
-        }
-        db.saveToSP(ORDER_ID_KEY, orderId)
-
-    }
     protected fun restoreActivity(orderFireStore: OrderFireStore){
 
         this.addHummus = orderFireStore.hummus
@@ -228,7 +193,6 @@ open class NewOrderActivity : AppCompatActivity() {
         this.name = orderFireStore.costumerName
         this.picklesNum = orderFireStore.pickles
         this.comment = orderFireStore.comment
-        this.orderId = orderFireStore.id
 
         switchHummus.isChecked = this.addHummus
         switchTahini.isChecked = this.addTahini
@@ -239,5 +203,21 @@ open class NewOrderActivity : AppCompatActivity() {
 
     companion object {
         const val ORDER_ID_KEY = "last_edit_status"
+    }
+
+    override fun onBackPressed() {
+        // no back screen
+    }
+
+    fun getId() : String{
+
+        val orderId = db.getFromSP(ORDER_ID_KEY, String::class.java)
+        if (orderId == null)
+        {
+            val randomId = UUID.randomUUID().toString()
+            db.saveToSP(ORDER_ID_KEY, randomId)
+            return randomId
+        }
+        return orderId
     }
 }

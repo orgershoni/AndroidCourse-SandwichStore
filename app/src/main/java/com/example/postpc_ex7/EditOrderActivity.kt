@@ -2,9 +2,9 @@ package com.example.postpc_ex7
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View.VISIBLE
 import android.widget.TextView
-import androidx.lifecycle.LiveData
 import com.google.firebase.firestore.ListenerRegistration
 
 class EditOrderActivity : NewOrderActivity() {
@@ -14,9 +14,16 @@ class EditOrderActivity : NewOrderActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val orderIdFromIntent = db.getFromSP(ORDER_ID_KEY, String::class.java)
-        if (orderIdFromIntent != null) {
-            orderId = orderIdFromIntent
+        val orderId : String
+        val orderIdChecker = db.getFromSP(ORDER_ID_KEY, String::class.java)
+        if (orderIdChecker == null)
+        {
+            Log.e("ERROR", "Edit Order screen can only be reached when id is saved to SP")
+            return
+        }
+        else
+        {
+            orderId = orderIdChecker
         }
 
         db.downloadOrder(orderId) { orderFireStore ->
@@ -34,8 +41,8 @@ class EditOrderActivity : NewOrderActivity() {
 
             db.removeOrder(orderId)
             db.removeFromSP(ORDER_ID_KEY)
-            val mainActivityIntent = Intent(this, MainActivity::class.java)
-            startActivity(mainActivityIntent)
+            val newOrderIntent = Intent(this, NewOrderActivity::class.java)
+            startActivity(newOrderIntent)
         }
 
         saveButton.setOnClickListener{
@@ -48,16 +55,7 @@ class EditOrderActivity : NewOrderActivity() {
                 val intent = Intent(this, OrderInProgressActivity::class.java)
                 startActivity(intent)
             }
-
         }
-//        orderLiveData.observe(this, {orderFireStore ->
-//            if (orderFireStore.status == OrderStatus.IN_PROGRESS)
-//            {
-//                val intent = Intent(this, OrderInProgressActivity::class.java)
-//                startActivity(intent)
-//            }
-//        })
-
     }
 
     override fun onDestroy() {
@@ -65,5 +63,8 @@ class EditOrderActivity : NewOrderActivity() {
         statusListenerRegistration?.remove()
     }
 
+    override fun onBackPressed() {
+        // no back screen
+    }
 
 }

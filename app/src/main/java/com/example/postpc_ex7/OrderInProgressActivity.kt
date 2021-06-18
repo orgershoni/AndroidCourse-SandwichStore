@@ -46,4 +46,8 @@ open class OrderInProgressActivity : AppCompatActivity() {
         super.onDestroy()
         statusListenerRegistration?.remove()
     }
+
+    override fun onBackPressed() {
+        // no back screen
+    }
 }

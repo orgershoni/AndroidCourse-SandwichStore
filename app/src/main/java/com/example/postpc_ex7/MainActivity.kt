@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData
 
 class MainActivity : AppCompatActivity() {
 
-    protected lateinit var orderLiveData : LiveData<OrderFireStore>
     protected lateinit var db: OrdersDataBase
 
 
@@ -16,7 +15,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         db = SandwichStoreApp.getInstance().ordersDataBase
         //db.clearSP()
-        orderLiveData = db.getOrderLiveData()
         val orderId = db.getFromSP(NewOrderActivity.ORDER_ID_KEY, String::class.java)
         if (orderId == null) {
             var intent = Intent(this, NewOrderActivity::class.java)

@@ -13,20 +13,14 @@ class OrdersDataBase() {
 
     private var db : FirebaseFirestore = FirebaseFirestore.getInstance()
     private lateinit var context : Context
-    private lateinit var mutableOrderLiveData : MutableLiveData<OrderFireStore>
-    private lateinit var orderLiveData : LiveData<OrderFireStore>
     var sp: SharedPreferences? = null
 
     constructor(context : Context) : this() {
         this.context = context
         sp = context.getSharedPreferences("todo_items_db", Context.MODE_PRIVATE)
-        mutableOrderLiveData = MutableLiveData();
-        orderLiveData = mutableOrderLiveData;
+
     }
 
-    fun getOrderLiveData() : LiveData<OrderFireStore>{
-        return orderLiveData;
-    }
 
     fun clearSP(){
         val edit = sp?.edit()
@@ -43,8 +37,8 @@ class OrdersDataBase() {
 
     fun <T> getFromSP(key : String, className : Class<T>): T? {
 
-        val gsonDesc : String? = this.sp?.getString(key, "")
-        if (gsonDesc != null && gsonDesc != "")
+        val gsonDesc : String? = this.sp?.getString(key, null)
+        if (gsonDesc != null)
         {
             return Gson().fromJson(gsonDesc, className)
         }
@@ -83,7 +77,6 @@ class OrdersDataBase() {
                 return@addSnapshotListener
             } else {
                 val orderFireStore = snapshot.toObject(OrderFireStore::class.java)
-                mutableOrderLiveData.value = orderFireStore
                 f(orderFireStore)
                 return@addSnapshotListener
             }
@@ -115,7 +108,6 @@ class OrdersDataBase() {
         db.collection("orders").document(id).get().
         addOnSuccessListener { result : DocumentSnapshot ->
             val orderObj = result.toObject(OrderFireStore::class.java)
-            mutableOrderLiveData.value = orderObj
             processFunc(orderObj)
 
         }.addOnFailureListener{it : Exception ->
