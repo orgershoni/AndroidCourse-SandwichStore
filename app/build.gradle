@@ -28,6 +28,12 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -35,7 +41,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
-    testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation platform('com.google.firebase:firebase-bom:28.1.0')
@@ -43,9 +48,28 @@ dependencies {
     //implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation 'com.google.firebase:firebase-firestore:23.0.1'
     implementation 'com.google.firebase:firebase-core:19.0.0'
+    testImplementation 'org.robolectric:robolectric:4.4'
+    testImplementation 'org.mockito:mockito-core:3.2.0'
+    implementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
+    testImplementation 'org.mockito:mockito-inline:2.13.0'
+    // Required -- JUnit 4 framework
+    testImplementation 'junit:junit:4.+'
+    // Optional -- Robolectric environment
+    testImplementation 'androidx.test:core:1.0.0'
+    // Optional -- Mockito framework
+    testImplementation 'org.mockito:mockito-core:1.10.19'
 
+    /**Power mock**/
+    testImplementation 'org.mockito:mockito-all:1.10.19'
 
+    testImplementation "org.powermock:powermock-module-junit4:2.0.7"
+    testImplementation "org.powermock:powermock-module-junit4-rule:2.0.7"
+    testImplementation "org.powermock:powermock-api-mockito2:2.0.7"
+    testImplementation "org.powermock:powermock-classloading-xstream:1.6.6"
+    /**End of power mock **/
 }
 repositories {
     mavenCentral()
 }
+
+apply plugin: 'com.google.gms.google-services'

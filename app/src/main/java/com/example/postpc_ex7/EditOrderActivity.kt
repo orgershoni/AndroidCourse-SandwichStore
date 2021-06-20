@@ -3,6 +3,7 @@ package com.example.postpc_ex7
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.View.VISIBLE
 import android.widget.TextView
 import com.google.firebase.firestore.ListenerRegistration
@@ -10,37 +11,50 @@ import com.google.firebase.firestore.ListenerRegistration
 class EditOrderActivity : NewOrderActivity() {
 
     var statusListenerRegistration : ListenerRegistration? = null
+    var orderId : String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val orderId : String
-        val orderIdChecker = db.getFromSP(ORDER_ID_KEY, String::class.java)
-        if (orderIdChecker == null)
+        // add a delete button
+        setSaveDeleteLayout(addDeleteButton = true)
+        if (name != "")
         {
-            Log.e("ERROR", "Edit Order screen can only be reached when id is saved to SP")
-            return
+            name = db.getNameFromSP()!!
         }
-        else
+        setNameTextView(name, isNewOrder = false)
+
+        // get orderId from SP (can't be null at this point)
+        if (orderId != "")
         {
-            orderId = orderIdChecker
+            orderId = db.getIDFromSP()!!
         }
 
-        db.downloadOrder(orderId) { orderFireStore ->
+        // load order from Firestore and fill activity fields with values
+        db.downloadOrderAndDo(orderId) { orderFireStore ->
             if (orderFireStore != null) {
                 restoreActivity(orderFireStore)
             }
         }
 
-        val headline = findViewById<TextView>(R.id.headline_new_order)
-        headline.text = "EDIT ORDER"
+        finishEditFab.setOnClickListener{
 
+            isEditingName = false
+            if (validateName(isNameUpdated = true))
+            {
+                editNameView.visibility = View.GONE
+                finishEditFab.visibility = View.GONE
+                editNameFab.visibility = VISIBLE
+                headlineView.visibility = VISIBLE
+                setNameTextView(name, isNewOrder = false)
+                db.saveNameToSP(name)
+            }
+        }
 
-        deleteButton.visibility = VISIBLE
         deleteButton.setOnClickListener{
-
             db.removeOrder(orderId)
-            db.removeFromSP(ORDER_ID_KEY)
+            db.removeIDFromSP()
+            // if delete order button is clicked, go back to NewOrderActivity
             val newOrderIntent = Intent(this, NewOrderActivity::class.java)
             startActivity(newOrderIntent)
         }
@@ -49,9 +63,10 @@ class EditOrderActivity : NewOrderActivity() {
             saveButtonOnClickListener()
         }
 
-
+        // install listener to check if order status was changed
         statusListenerRegistration = db.getStatusListener(orderId) { orderFireStore ->
             if (orderFireStore != null && orderFireStore.status == OrderStatus.IN_PROGRESS) {
+                // if status in changed to IN_PROGRESS, open OrderInProgressActivity
                 val intent = Intent(this, OrderInProgressActivity::class.java)
                 startActivity(intent)
             }

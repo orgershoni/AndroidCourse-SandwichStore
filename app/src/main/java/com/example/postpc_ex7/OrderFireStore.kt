@@ -19,19 +19,4 @@ data class OrderFireStore(var hummus: Boolean = false,
                           var costumerName: String = "",
                           var id : String = "",
                           var status : OrderStatus = OrderStatus.WAITING) : Serializable
-{
-    fun serialize() : String{
-        return Gson().toJson(this)
-    }
-
-    companion object{
-        fun deserialize(json: String?) : OrderFireStore? {
-            if (json == null)
-            {
-                return null;
-            }
-            return Gson().fromJson(json, OrderFireStore::class.java)
-        }
-    }
-
-}
+{}

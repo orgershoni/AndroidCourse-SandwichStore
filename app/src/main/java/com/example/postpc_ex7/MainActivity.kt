@@ -3,25 +3,28 @@ package com.example.postpc_ex7
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LiveData
 
 class MainActivity : AppCompatActivity() {
 
-    protected lateinit var db: OrdersDataBase
-
+    lateinit var db: OrdersDataBase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        db = SandwichStoreApp.getInstance().ordersDataBase
-        //db.clearSP()
-        val orderId = db.getFromSP(NewOrderActivity.ORDER_ID_KEY, String::class.java)
+
+        if (!this::db.isInitialized)
+        {
+            db = SandwichStoreApp.getDB()
+        }
+        db.clearSP();
+        // orderId would be null if no order is currently running
+        val orderId = db.getIDFromSP()
         if (orderId == null) {
-            var intent = Intent(this, NewOrderActivity::class.java)
+            val intent = Intent(this, NewOrderActivity::class.java)
             startActivity(intent)
             return
         }
-        db.downloadOrder(orderId) { orderObj ->
+        db.downloadOrderAndDo(orderId) { orderObj ->
             chooseActivity(orderObj)
         }
 
@@ -30,30 +33,26 @@ class MainActivity : AppCompatActivity() {
 
     private fun chooseActivity(orderFireStore: OrderFireStore?){
 
-        var intent = Intent(this, MainActivity::class.java)
+        val intent : Intent
+        val status = orderFireStore?.status
+
         if (orderFireStore == null || orderFireStore.status == OrderStatus.DONE)
         {
             intent = Intent(this, NewOrderActivity::class.java)
             if (orderFireStore != null)
             {
-                db.removeFromSP(NewOrderActivity.ORDER_ID_KEY)
+                db.removeIDFromSP()
             }
         }
-        else
-        {
-            if (orderFireStore.status ==  OrderStatus.WAITING)
-            {
-                intent = Intent(this, EditOrderActivity::class.java)
-            }
-            else if (orderFireStore.status == OrderStatus.IN_PROGRESS)
-            {
-                intent = Intent(this, OrderInProgressActivity::class.java)
-            }
-            else if (orderFireStore.status == OrderStatus.READY)
-            {
-                intent = Intent(this, OrderReadyActivity::class.java)
+        else {
+            intent = when (status) {
+                OrderStatus.WAITING -> Intent(this, EditOrderActivity::class.java)
+                OrderStatus.IN_PROGRESS -> Intent(this, OrderInProgressActivity::class.java)
+                OrderStatus.READY -> Intent(this, OrderReadyActivity::class.java)
+                else -> Intent(this, NewOrderActivity::class.java)
             }
         }
+
         startActivity(intent)
     }
 

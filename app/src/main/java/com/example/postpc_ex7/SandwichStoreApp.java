@@ -1,6 +1,8 @@
 package com.example.postpc_ex7;
 import android.app.Application;
 
+import com.google.firebase.FirebaseApp;
+
 public class SandwichStoreApp extends Application {
 
     OrdersDataBase ordersDataBase = null;
@@ -13,5 +15,8 @@ public class SandwichStoreApp extends Application {
         instance = this;
     }
 
-    public static SandwichStoreApp getInstance() { return  instance; }
+    //private static SandwichStoreApp getInstance() { return  instance; }
+    public static OrdersDataBase getDB() {
+        return instance.ordersDataBase;
+    }
 }

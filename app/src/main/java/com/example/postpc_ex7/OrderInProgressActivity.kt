@@ -12,7 +12,6 @@ import com.google.firebase.firestore.ListenerRegistration
 open class OrderInProgressActivity : AppCompatActivity() {
 
 
-
     lateinit var progressBar : ProgressBar
     lateinit var gotItFab : Button
     lateinit var db : OrdersDataBase
@@ -24,8 +23,11 @@ open class OrderInProgressActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_order_in_progress)
 
-        db = SandwichStoreApp.getInstance().ordersDataBase
-        val orderId = db.getFromSP(NewOrderActivity.ORDER_ID_KEY, String::class.java)
+        if (!this::db.isInitialized)
+        {
+            db = SandwichStoreApp.getDB()
+        }
+        val orderId = db.getIDFromSP()
 
         progressBar = findViewById(R.id.progressBar)
         gotItFab = findViewById(R.id.gotItButton)

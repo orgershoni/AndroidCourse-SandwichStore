@@ -5,9 +5,10 @@ import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.TextView
-import com.example.postpc_ex7.NewOrderActivity.Companion.ORDER_ID_KEY
 
 class OrderReadyActivity : OrderInProgressActivity() {
+
+    lateinit var orderId : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -15,7 +16,12 @@ class OrderReadyActivity : OrderInProgressActivity() {
         statusListenerRegistration?.remove()
         progressBar.visibility = GONE
         gotItFab.visibility = VISIBLE
-        val orderId = db.getFromSP(ORDER_ID_KEY, String::class.java)
+
+
+        if (!this::orderId.isInitialized)
+        {
+            orderId = db.getIDFromSP()!!
+        }
 
         val headline = findViewById<TextView>(R.id.headline_order_in_progress)
         headline.text = "ORDER READY !"
@@ -25,7 +31,7 @@ class OrderReadyActivity : OrderInProgressActivity() {
             progressBar.visibility = GONE
             if (orderId != null) {
                 db.setOrderStatus(orderId, OrderStatus.DONE)
-                db.removeFromSP(ORDER_ID_KEY)
+                db.removeIDFromSP()
                 val newActivity = Intent(this, NewOrderActivity::class.java)
                 startActivity(newActivity);
             }
