@@ -18,14 +18,16 @@ class EditOrderActivity : NewOrderActivity() {
 
         // add a delete button
         setSaveDeleteLayout(addDeleteButton = true)
-        if (name != "")
+
+        // load name and order from sp
+        if (name == "")
         {
             name = db.getNameFromSP()!!
         }
         setNameTextView(name, isNewOrder = false)
 
-        // get orderId from SP (can't be null at this point)
-        if (orderId != "")
+
+        if (orderId == "")
         {
             orderId = db.getIDFromSP()!!
         }

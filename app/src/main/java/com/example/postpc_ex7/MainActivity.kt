@@ -16,7 +16,6 @@ class MainActivity : AppCompatActivity() {
         {
             db = SandwichStoreApp.getDB()
         }
-        db.clearSP();
         // orderId would be null if no order is currently running
         val orderId = db.getIDFromSP()
         if (orderId == null) {

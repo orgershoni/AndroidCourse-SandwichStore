@@ -95,13 +95,15 @@ public class FlowTests {
     @Test
     public void when_ClickingOnSaveButton_them_uploadOrderIsCalledWithRightArgs() {
 
+        EditOrderActivity activityNewOrderTest = editActivity.get();
+        activityNewOrderTest.setName("different name");
+        activityNewOrderTest.setOrderId("id");
+        
         editActivity.create().visible();
         ArgumentCaptor<OrderFireStore> argument = ArgumentCaptor.forClass(OrderFireStore.class);
 
         // init views
-        EditOrderActivity activityNewOrderTest = editActivity.get();
-        activityNewOrderTest.setName("different name");
-        activityNewOrderTest.setOrderId("id");
+
 
         EditText name = activityNewOrderTest.findViewById(R.id.name_headline);
         EditText pickles = activityNewOrderTest.findViewById(R.id.pickles_number);
