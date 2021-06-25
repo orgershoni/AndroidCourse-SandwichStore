@@ -98,7 +98,7 @@ public class FlowTests {
         EditOrderActivity activityNewOrderTest = editActivity.get();
         activityNewOrderTest.setName("different name");
         activityNewOrderTest.setOrderId("id");
-        
+
         editActivity.create().visible();
         ArgumentCaptor<OrderFireStore> argument = ArgumentCaptor.forClass(OrderFireStore.class);
 
